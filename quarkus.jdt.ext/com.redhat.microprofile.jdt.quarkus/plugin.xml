@@ -58,5 +58,14 @@
 
    <extension point="org.eclipse.lsp4mp.jdt.core.propertiesProviders">
       <provider class="com.redhat.microprofile.jdt.internal.quarkus.cache.properties.QuarkusCacheResultProvider" />
-   </extension>      
+   </extension>
+   
+   <!-- Quarkus Scheduled annotation -->
+   
+   <extension point="org.eclipse.lsp4mp.jdt.core.javaASTValidators">
+      <!-- Java validation for the MicroProfile Fault Tolerance annotations -->
+      <annotationValidator annotation="io.quarkus.scheduler.Scheduled" source="quarkus">
+         <attribute name="delay" range="0" /> <!-- x >=0 -->
+      </annotationValidator>
+   </extension>
 </plugin>
