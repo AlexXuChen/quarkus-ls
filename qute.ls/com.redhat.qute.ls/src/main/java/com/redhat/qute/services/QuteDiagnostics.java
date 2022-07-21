@@ -67,6 +67,7 @@ import com.redhat.qute.project.tags.UserTag;
 import com.redhat.qute.services.diagnostics.JavaBaseTypeOfPartData;
 import com.redhat.qute.services.diagnostics.QuteDiagnosticsForSyntax;
 import com.redhat.qute.services.diagnostics.QuteErrorCode;
+import com.redhat.qute.services.diagnostics.UnknownPropertyData;
 import com.redhat.qute.services.nativemode.JavaTypeAccessibiltyRule;
 import com.redhat.qute.services.nativemode.JavaTypeFilter;
 import com.redhat.qute.services.nativemode.JavaTypeFilter.JavaMemberAccessibility;
@@ -799,10 +800,15 @@ class QuteDiagnostics {
 				Range range = QutePositionUtility.createRange(methodPart);
 				Diagnostic diagnostic = createDiagnostic(range, DiagnosticSeverity.Error,
 						QuteErrorCode.InfixNotationParameterRequired, methodPart.getPartName());
+				String signature = baseType.getSignature();
+				String property = methodPart.getPartName();
+				diagnostic.setData(new UnknownPropertyData(signature, property));
 				diagnostics.add(diagnostic);
 				return null;
 			}
 		}
+		String signature = baseType.getSignature();
+		String methodName = methodPart.getPartName();
 
 		// Validate parameters of the method part
 		boolean undefinedType = false;
@@ -830,7 +836,6 @@ class QuteDiagnostics {
 
 		// All parameters are resolved, validate the existing of method name according
 		// to the computed parameter types
-		String methodName = methodPart.getPartName();
 		String namespace = methodPart.getNamespace();
 		JavaMemberResult result = javaCache.findMethod(baseType, namespace, methodName, parameterTypes,
 				filter.isInNativeMode(), projectUri);
@@ -866,6 +871,7 @@ class QuteDiagnostics {
 			}
 			Range range = QutePositionUtility.createRange(methodPart);
 			Diagnostic diagnostic = createDiagnostic(range, DiagnosticSeverity.Error, errorCode, methodName, arg);
+			diagnostic.setData(new UnknownPropertyData(signature, methodName));
 			diagnostics.add(diagnostic);
 			return null;
 		} else if (canValidateMemberInNativeMode(filter, method)) {
@@ -880,6 +886,7 @@ class QuteDiagnostics {
 					Range range = QutePositionUtility.createRange(methodPart);
 					Diagnostic diagnostic = createDiagnostic(range, DiagnosticSeverity.Error,
 							QuteErrorCode.MethodNotSupportedInNativeMode, method.getName(), baseType.getSignature());
+					diagnostic.setData(new UnknownPropertyData(signature, methodName));
 					diagnostics.add(diagnostic);
 					return null;
 				}
@@ -888,6 +895,7 @@ class QuteDiagnostics {
 					Diagnostic diagnostic = createDiagnostic(range, DiagnosticSeverity.Error,
 							QuteErrorCode.InheritedMethodNotSupportedInNativeMode, method.getName(),
 							baseType.getSignature());
+					diagnostic.setData(new UnknownPropertyData(signature, methodName));
 					diagnostics.add(diagnostic);
 					return null;
 				}
@@ -900,6 +908,7 @@ class QuteDiagnostics {
 					Diagnostic diagnostic = createDiagnostic(range, DiagnosticSeverity.Error,
 							QuteErrorCode.MethodIgnoredByTemplateData, method.getName(), baseType.getSignature(),
 							javaMemberAccessibility.getIgnore());
+					diagnostic.setData(new UnknownPropertyData(signature, methodName));
 					diagnostics.add(diagnostic);
 					return null;
 				}
@@ -909,6 +918,7 @@ class QuteDiagnostics {
 					Diagnostic diagnostic = createDiagnostic(range, DiagnosticSeverity.Error,
 							QuteErrorCode.ForbiddenByTemplateDataProperties, method.getName(), baseType.getSignature(),
 							method.getParameters().size());
+					diagnostic.setData(new UnknownPropertyData(signature, methodName));
 					diagnostics.add(diagnostic);
 					return null;
 				}
@@ -921,6 +931,7 @@ class QuteDiagnostics {
 							: QuteErrorCode.ForbiddenByRegisterForReflectionFields;
 					Diagnostic diagnostic = createDiagnostic(range, DiagnosticSeverity.Error, errorCode,
 							method.getName(), baseType.getSignature());
+					diagnostic.setData(new UnknownPropertyData(signature, methodName));
 					diagnostics.add(diagnostic);
 					return null;
 				}
@@ -937,6 +948,7 @@ class QuteDiagnostics {
 					QuteErrorCode.InvalidVirtualMethod, //
 					method.getName(), method.getSimpleSourceType(), //
 					baseType.getJavaElementSimpleType());
+			diagnostic.setData(new UnknownPropertyData(signature, methodName));
 			diagnostics.add(diagnostic);
 			return null;
 		}
@@ -950,6 +962,7 @@ class QuteDiagnostics {
 				Range range = QutePositionUtility.createRange(methodPart);
 				Diagnostic diagnostic = createDiagnostic(range, DiagnosticSeverity.Error,
 						QuteErrorCode.InvalidMethodInfixNotation, methodName);
+				diagnostic.setData(new UnknownPropertyData(signature, methodName));
 				diagnostics.add(diagnostic);
 				return null;
 			}

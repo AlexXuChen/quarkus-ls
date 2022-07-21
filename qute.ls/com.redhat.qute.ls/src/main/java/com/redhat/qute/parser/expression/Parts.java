@@ -41,7 +41,7 @@ public class Parts extends Node {
 
 	/**
 	 * Returns the object part of the parts and null otherwise.
-	 * 
+	 *
 	 * @return the object part of the parts and null otherwise.
 	 */
 	public ObjectPart getObjectPart() {
@@ -65,7 +65,7 @@ public class Parts extends Node {
 
 	/**
 	 * Returns the namespace part of the parts and null otherwise.
-	 * 
+	 *
 	 * @return the namespace part of the parts and null otherwise.
 	 */
 	public NamespacePart getNamespacePart() {
@@ -78,10 +78,42 @@ public class Parts extends Node {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Returns the property part of the parts and null otherwise.
+	 *
+	 * @return the property part of the parts and null otherwise.
+	 */
+	public PropertyPart getPropertyPart() {
+		if (super.getChildCount() == 0) {
+			return null;
+		}
+		Part secondPart = getChild(1);
+		if (secondPart.getPartKind() == PartKind.Property) {
+			return (PropertyPart) secondPart;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the method part of the parts and null otherwise.
+	 *
+	 * @return the method part of the parts and null otherwise.
+	 */
+	public MethodPart getMethodPart() {
+		if (super.getChildCount() == 0) {
+			return null;
+		}
+		Part secondPart = getChild(1);
+		if (secondPart.getPartKind() == PartKind.Method) {
+			return (MethodPart) secondPart;
+		}
+		return null;
+	}
+
 	/**
 	 * Returns the namespace of the parts and null otherwise.
-	 * 
+	 *
 	 * @return the namespace of the parts and null otherwise.
 	 */
 	public String getNamespace() {
